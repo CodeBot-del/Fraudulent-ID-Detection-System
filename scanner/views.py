@@ -21,6 +21,15 @@ from rest_framework.generics import ListCreateAPIView,  RetrieveUpdateDestroyAPI
 from .serializers import ScannedImageSerializer, OriginalImageSerializer
 from .models import OriginalImage, ScannedImage
 # Create your views here.
+
+# view to handle server errors page
+def internalServerError(exception):
+    return render(exception, 'serverError.html', status=500)
+
+def pageNotFound(request, exception):
+    return render(request, '404.html', status=404)
+
+
 def index(request):
     scans = 200
     form = ImageForm()
@@ -69,14 +78,14 @@ def scan(request):
         detectors = ["opencv", "ssd", "mtcnn", "dlib", "retinaface"]
         
         #pass a data frame to store results 
-        df = DeepFace.find(img_path = image, db_path = db_path, model_name = model_name[2], detector_backend = detectors[4])
+        df = DeepFace.find(img_path = image, db_path = db_path, model_name = model_name[0], detector_backend = detectors[3])
         
         if not df.empty:
             #if dataframe returns similar faces, pass message as Authorized 
             result= "Authorized"
         else:
             result="Unknown"
-            
+        
         img = cv2.imread(image)
         imgS = cv2.resize(img,(0,0),None,0.25,0.25) #compress the image to improve performance
         imgS = cv2.cvtColor(img,cv2.COLOR_BGR2RGB) 
@@ -94,8 +103,10 @@ def scan(request):
                 im_bytes = frame_buff.tobytes()
                 frame_b64 = base64.b64encode(im_bytes)
                 new_img = frame_b64.decode()
+                color = "green"
                 
-                return render(request, 'scan.html', {"message":message, "img": new_img})
+                
+                return render(request, 'scan.html', {"message":message, "img": new_img, "result":result, "color":color})
             else:
                 y1,x1,y2,x2 = faceLoc
                 new_image = cv2.rectangle(img,(x1,y1),(x2,y2),(0,0,255),2)
@@ -105,8 +116,10 @@ def scan(request):
                 im_bytes = frame_buff.tobytes()
                 frame_b64 = base64.b64encode(im_bytes)
                 new_img = frame_b64.decode()
+                color = "red"
                 
-                return render(request, 'scan.html', {"message":message,"file":file, "img": new_img})
+                
+                return render(request, 'scan.html', {"result":result,"file":file, "img": new_img, "color":color})
     
     elif mode == "QR & Bar Code":
         
@@ -114,7 +127,7 @@ def scan(request):
         cap = image
         qrimage = cv2.imread(cap)
         
-        with open('/home/egovridc/Desktop/FaceProject/data.txt') as f:  #check this data.txt file add it to the root direcory of the project
+        with open('D:/QRcodes/data.txt') as f:  #check this data.txt file add it to the root direcory of the project
             Authenticated = f.read().splitlines()
             
         while True:
@@ -142,8 +155,12 @@ def scan(request):
                 im_bytes = frame_buff.tobytes()
                 frame_b64 = base64.b64encode(im_bytes)
                 new_img = frame_b64.decode()
+                if myOutput == 'Authorized':
+                    color = "green"
+                else:
+                    color = 'red'
                 
-                return render(request, 'scan.html', {"message":message, "img": new_img})
+                return render(request, 'scan.html', {"result": myOutput, "img": new_img, "color":color})
 
 @gzip.gzip_page                  
 def stream(request):
@@ -304,3 +321,7 @@ class ListCreateOriginalImage(ListCreateAPIView):
 class ListCreateScannedImage(ListCreateAPIView):
     queryset = ScannedImage.objects.all()
     serializer_class = ScannedImageSerializer
+    
+def addface(request):
+    
+    return render(request, 'regFace.html')

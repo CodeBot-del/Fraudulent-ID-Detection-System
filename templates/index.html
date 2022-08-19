@@ -20,14 +20,14 @@
   <link rel="shortcut icon" href="{%static 'images/favicon.png' %}" />
 </head>
 <body>
-  <div class="row" id="proBanner" style="display: none;">
+  {% comment %} <div class="row" id="proBanner" style="display: none;">
     <div class="col-12">
       <span class="d-flex align-items-center purchase-popup">
         <p>Welcome to Alpha AI. You can follow the manual on the Help section to get started.</p>
         <i class="typcn typcn-delete-outline" id="bannerClose"></i>
       </span>
     </div>
-  </div>
+  </div> {% endcomment %}
   <div class="container-scroller">
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -62,14 +62,14 @@
               <i class="typcn typcn-calendar"></i>
             </a>
           </li>
-          <li class="nav-item dropdown">
+          {% comment %} <li class="nav-item dropdown">
             <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
               <i class="typcn typcn-cog-outline mx-0"></i>
               <span class="count"></span>
             </a>
             
-          </li>
-          <li class="nav-item dropdown mr-0">
+          </li> {% endcomment %}
+          {% comment %} <li class="nav-item dropdown mr-0">
             <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
               <i class="typcn typcn-bell mx-0"></i>
               <span class="count"></span>
@@ -116,7 +116,7 @@
                 </div>
               </a>
             </div>
-          </li>
+          </li> {% endcomment %}
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
           <span class="typcn typcn-th-menu"></span>
@@ -150,16 +150,16 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
-          <li class="nav-item">
+          {% comment %} <li class="nav-item">
             <a class="nav-link" href="">
               <i class="typcn typcn-device-desktop menu-icon"></i>
               <span class="menu-title">Activity</span>
               
             </a>
-          </li>
+          </li> {% endcomment %}
           
           
-          <li class="nav-item">
+          {% comment %} <li class="nav-item">
             <form action="scan" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               {{form.as_p}}
@@ -171,26 +171,8 @@
                
               <button type="submit" class="btn btn-outline-secondary mt-1">start</button>
             </form>
-          </li>
-          <li class="nav-item mt-4">
-              <i class="typcn typcn-star menu-icon" style="font-size: 24px;"></i>
-              <span class="menu-title">Premium</span>
-          </li>
-          <li class="nav-item">
-            <p class="menu-title">Real Time Recognition</p>
-          </li>
-          <li class="nav-item">
-            <form action="stream" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-secondary mt-1" style="padding-right: 44px;">Facial Scan</button>
-            </form>
-          </li>
-          <li class="nav-item">
-            <form action="qrstream" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-secondary mt-1">QR & Bar Code </button>
-            </form>
-          </li>
+          </li> {% endcomment %}
+          
           <li class="nav-item">
             <a class="nav-link" href="">
               <i class="typcn typcn-info-large menu-icon"></i>
@@ -206,15 +188,65 @@
 
           <div class="row">
             <div class="col-xl-6 grid-margin stretch-card flex-column">
-              <h5 class="mb-2 text-titlecase mb-4">Welcome</h5>
+              {% comment %} HAPA WEKA LOGO YA Alpha IDs {% endcomment %}
+              <h5 class="mb-2 text-titlecase mb-4">Alpha~Scan </h5>  
               <div class="row h-100">
                 <div class="col-md-12 stretch-card">
                   <div class="card">
                     <div class="card-body">
                       <div class="d-flex justify-content-between align-items-start flex-wrap">
                         <div>
-                          <img src="{%static 'images/alpha ai.png' %}" alt="view" style="width:100%; height: 500px;">
-                          
+                          {% comment %} <img src="{%static 'images/alpha ai.png' %}" alt="view" style="width:100%; height: 500px;"> {% endcomment %}
+                          {% comment %} WEKA HAPA FORM YA KU UPLOAD PICHA {% endcomment %}
+                          <ul class="nav">
+                            <li class="nav-item">
+                              <a class="nav-link" href="" style="color:black;">
+                                <i class="typcn typcn-upload menu-icon" style="font-size:30px;"></i>
+                                <span class="menu-title">Upload ID card Image</span>
+                                
+                              </a>
+                            </li>
+
+                            <li class="nav-item">
+                              <form action="scan" method="post" enctype="multipart/form-data" style="margin:10px;">
+                                {% csrf_token %}
+                                {{form.as_p}}
+                                <select class="form-control" name="mode" required>
+                                  <option value="">Select Mode</option>
+                                  <option value="Facial Scan">Facial Scan</option>
+                                  <option value ="QR & Bar Code">QR & Bar Code</option>
+                                </select> 
+                                
+                                <button type="submit" class="btn btn-outline-secondary mt-1">start</button>
+                              </form>
+                            </li>
+                            <ul>
+
+                            <ul style="list-style:none; margin-top:35px; margin-left:-20px;" >
+                              <li class="nav-item">
+                                <i class="typcn typcn-star menu-icon" style="font-size: 24px;"></i>
+                                <span class="menu-title">Authorized Personnels</span>
+                            </li>
+                            <li class="nav-item mt-4">
+                              <p class="menu-title">Register New Member</p>
+                              
+                            </li>
+                            <li class="nav-item">
+                              <form action="addface" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary mt-1" style="padding-right: 44px;">Register Face</button>
+                              </form>
+                            </li>
+                            <li class="nav-item">
+                              <form action="qrstream" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary mt-1" disabled="true">Register QRcode</button>
+                              </form>
+                            </li>
+                            <p style="color:red;">*coming soon</p>
+
+                          </ul>
+
                         </div>
                         <div class="d-flex flex-wrap mt-1 mt-md-0"></div>
                       </div>
@@ -232,8 +264,18 @@
                     <div class="card-body">
                       <div class="d-flex justify-content-between align-items-start flex-wrap">
                         <div>
-                          <img src="{%static 'images/apps.jpg' %}" alt="view" style="width:100%; height: 500px;">
-                          
+                          {% comment %} <img src="{%static 'images/apps.jpg' %}" alt="view" style="width:100%; height: 500px;"> {% endcomment %}
+                          <div>
+                            <h5 class="menu-title">Fast and Easy ID card Verification</h5>
+                          </div>
+                          <div>
+                            <img src="{%static 'images/ID1.jpg' %}" alt="view" style="width:300px; height: 200px;">
+                          </div>
+                          <div style="margin-top:30px;" >
+                            <p class="menu-title" style="font-size:17px;">Upload ID and check for fraudulence</p>
+                            <p style="margin-top:20px;"><span><img src="{%static 'images/faceIcon.png'%}"></span> Alpha~Scan uses Artificial Intelligence to verify users with their face Identities.</p>
+                            <p><span><img src="{%static 'images/qr.png' %}"></span>Verify organization's members by just uploading a photo of their ID containing their QR codes.. </p>
+                          </div>
                         </div>
                         <div class="d-flex flex-wrap mt-1 mt-md-0"></div>
                       </div>
@@ -245,110 +287,7 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-xl-4 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body border-bottom">
-                  <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h6 class="mb-2 mb-md-0 text-uppercase font-weight-medium">Overall Scans</h6>
-                    
-                  </div>
-                </div>
-                <div class="card-body">
-                  <canvas id="sales-chart-c" class="mt-2"></canvas>
-                  <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3 mt-4">
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                      <p class="text-muted">Unknown</p>
-                      <h5>492</h5>
-                      <div class="d-flex align-items-baseline">
-                        <p class="text-success mb-0">0.5%</p>
-                        <i class="typcn typcn-arrow-up-thick text-success"></i>
-                      </div>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                      <p class="text-muted">Registered</p>
-                      <h5>87k</h5>
-                      <div class="d-flex align-items-baseline">
-                        <p class="text-success mb-0">0.8%</p>
-                        <i class="typcn typcn-arrow-up-thick text-success"></i>
-                      </div>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                      <p class="text-muted">Authorized</p>
-                      <h5>882</h5>
-                      <div class="d-flex align-items-baseline">
-                        <p class="text-danger mb-0">-04%</p>
-                        <i class="typcn typcn-arrow-down-thick text-danger"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center">
-                    
-                    <p class="mb-0">overview</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-              <div class="row">
-                <div class="col-md-12 grid-margin stretch-card">
-                  <div class="card newsletter-card bg-gradient-warning">
-                    <div class="card-body">
-                      <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                        <h5 class="mb-3 text-white">Newsletter</h5>
-                        <form class="form d-flex flex-column align-items-center justify-content-between w-100">
-                          <div class="form-group mb-2 w-100">
-                            <input type="text" class="form-control" placeholder="email address">
-                          </div>
-                          <button class="btn btn-danger btn-rounded mt-1" type="submit">Subscribe</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-12 stretch-card">
-                  <div class="card profile-card bg-gradient-primary">
-                    <div class="card-body">
-                      <div class="row align-items-center h-100">
-                        <div class="col-md-4">
-                          <figure class="avatar mx-auto mb-4 mb-md-0">
-                            <img src="{%static 'images/alpha.png' %}" alt="avatar">
-                          </figure>
-                        </div>
-                        <div class="col-md-8">
-                          <h5 class="text-white text-center text-md-left">Alpha AI</h5>
-                          <p class="text-white text-center text-md-left">alphai@gmail.com</p>
-                          <div class="d-flex align-items-center justify-content-between info pt-2">
-                            <div>
-                              <p class="text-white font-weight-bold">Released</p>
-                              <p class="text-white font-weight-bold">Headquaters</p>
-                            </div>
-                            <div>
-                              <p class="text-white">17 April 22</p>
-                              <p class="text-white">Tanzania</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body border-bottom">
-                  <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h6 class="mb-2 mb-md-0 text-uppercase font-weight-medium">Scan Statistics</h6>
-                    
-                  </div>
-                </div>
-                <div class="card-body">
-                  <canvas id="sales-chart-d" height="320"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
         </div>
         <!-- content-wrapper ends -->

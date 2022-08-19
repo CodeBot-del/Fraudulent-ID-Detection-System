@@ -8,6 +8,7 @@ urlpatterns = [
     path('scan', scan, name='scan'),
     path('stream', stream, name='stream'),
     path('qrstream', qrstream, name='qrstream'),
+    path('addface', addface, name='addface'),
     path('original/', ListCreateOriginalImage.as_view(), name='original-list'),
     path('scanned/', ListCreateScannedImage.as_view(), name='scanned-list'),
     

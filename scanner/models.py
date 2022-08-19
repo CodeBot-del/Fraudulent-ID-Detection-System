@@ -13,6 +13,8 @@ class Image(models.Model):
 
 
 
+
+
 # APIS
 class OriginalImage(models.Model):
     image = models.ImageField(upload_to='media/')
