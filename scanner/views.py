@@ -26,10 +26,11 @@ from .models import OriginalImage, ScannedImage
 def internalServerError(exception):
     return render(exception, 'serverError.html', status=500)
 
+# view to handle page not found
 def pageNotFound(request, exception):
     return render(request, '404.html', status=404)
 
-
+# view to redirect to home page
 def index(request):
     scans = 200
     form = ImageForm()
@@ -39,20 +40,21 @@ def index(request):
 def findEncodings(images):
     encodeList = [] 
     for img in images:
-        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-        encode = face_recognition.face_encodings(img)[0] 
-        encodeList.append(encode)
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB) #convert images to RGB
+        encode = face_recognition.face_encodings(img)[0]  #find face encodings
+        encodeList.append(encode) #append the encodings to the list
     return encodeList
 
+# View to scan and verify the Images
 def scan(request):
     
-    mode = request.POST['mode']
+    mode = request.POST['mode'] #recieve the selected scan mode by the user
     
     message = mode
     if request.method == "POST":
-        form=ImageForm(data=request.POST,files=request.FILES)
+        form=ImageForm(data=request.POST,files=request.FILES) #recieve the uploaded image from user 
         if form.is_valid():
-            form.save()
+            form.save() #save image to database
             file = request.FILES
             file = file['image'].name
             # obj=form.instance
@@ -64,18 +66,14 @@ def scan(request):
     #     image = '/home/egovridc/Desktop/Steve/DjangoTutorial/alpha' + file_url
     
     
-    image = './media/img/22/' + file
+    image = './media/img/22/' + file  #save the image to folder
     
-            
+    # Functions for facial scan and QR code scan
     if mode == "Facial Scan":
         
-        
-        # image = Upload.objects.latest('image')
-        # image = '/home/egovridc/Desktop/FaceProject/3.jpg'
-        
-        db_path = 'alpha-images'
-        model_name = ['Facenet', 'OpenFace','ArcFace']
-        detectors = ["opencv", "ssd", "mtcnn", "dlib", "retinaface"]
+        db_path = 'alpha-images' #path to the face database
+        model_name = ['Facenet', 'OpenFace','ArcFace'] #facial recogition models
+        detectors = ["opencv", "ssd", "mtcnn", "dlib", "retinaface"] #facial detection models
         
         #pass a data frame to store results 
         df = DeepFace.find(img_path = image, db_path = db_path, model_name = model_name[0], detector_backend = detectors[3])
@@ -88,10 +86,11 @@ def scan(request):
         
         img = cv2.imread(image)
         imgS = cv2.resize(img,(0,0),None,0.25,0.25) #compress the image to improve performance
-        imgS = cv2.cvtColor(img,cv2.COLOR_BGR2RGB) 
+        imgS = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)  #convert the image to RGB
         
-        facesCurFrame = face_recognition.face_locations(imgS)
+        facesCurFrame = face_recognition.face_locations(imgS) #detect face location so we can draw bounding boxes
 
+        # Put bounding boxes and words on the location of the face
         for faceLoc in facesCurFrame:
             if result == "Authorized":
                 y1,x1,y2,x2 = faceLoc
