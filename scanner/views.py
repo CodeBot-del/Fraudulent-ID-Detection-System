@@ -69,6 +69,7 @@ def scan(request):
     image = './media/img/22/' + file  #save the image to folder
     
     # Functions for facial scan and QR code scan
+    # for facial scan
     if mode == "Facial Scan":
         
         db_path = 'alpha-images' #path to the face database
@@ -93,16 +94,17 @@ def scan(request):
         # Put bounding boxes and words on the location of the face
         for faceLoc in facesCurFrame:
             if result == "Authorized":
-                y1,x1,y2,x2 = faceLoc
+                y1,x1,y2,x2 = faceLoc  # assign the face location points to variables
                 # y1,x1,y2,x2 = y1*4,x1*4,y2*4,x2*4 
-                new_image = cv2.rectangle(img,(x1,y1),(x2,y2),(0,255,0),2)
+                new_image = cv2.rectangle(img,(x1,y1),(x2,y2),(0,255,0),2) #draw rectangle around the face
                 new_image = cv2.rectangle(new_image, (x1,y2-35),(x2,y2),(0,255,0), cv2.FILLED) #starting point on height reduced by -35 to be a little lower so we can write the name on top of this rectangle
-                new_image = cv2.putText(new_image,result, (x2, y2-6), cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2)
-                _, frame_buff = cv2.imencode('.jpg', new_image)
-                im_bytes = frame_buff.tobytes()
-                frame_b64 = base64.b64encode(im_bytes)
-                new_img = frame_b64.decode()
-                color = "green"
+                new_image = cv2.putText(new_image,result, (x2, y2-6), cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255),2) #put text on the bounding box
+                # To display this openCV image into the web browser, the following processes are involved.
+                _, frame_buff = cv2.imencode('.jpg', new_image) #convert the image into a buffer image
+                im_bytes = frame_buff.tobytes() #convert the buffer to bytes
+                frame_b64 = base64.b64encode(im_bytes) #encode the bytes into base64
+                new_img = frame_b64.decode() #decode the base64 to an image the can be display it as an HTML image
+                color = "green"  #green color for authorized members
                 
                 
                 return render(request, 'scan.html', {"message":message, "img": new_img, "result":result, "color":color})
@@ -115,11 +117,11 @@ def scan(request):
                 im_bytes = frame_buff.tobytes()
                 frame_b64 = base64.b64encode(im_bytes)
                 new_img = frame_b64.decode()
-                color = "red"
+                color = "red"  #red color for unauthorized people
                 
-                
+                # redirect to the results page with the scan results and the image with bounding boxes showing results.
                 return render(request, 'scan.html', {"result":result,"file":file, "img": new_img, "color":color})
-    
+    # for QR code scan
     elif mode == "QR & Bar Code":
         
         # file = request.POST['filename']
@@ -132,24 +134,28 @@ def scan(request):
         while True:
             #in case of multiple barcodes
             for barcode in decode(qrimage):
-                myData = barcode.data.decode('utf-8')
+                myData = barcode.data.decode('utf-8') #decode the QR code to obtain the hidden content 
                 print(myData)
                 
+                # for authorized QR codes
                 if myData in Authenticated:
-                    myOutput = 'Authorized'
-                    myColor = (0,255,0)
+                    myOutput = 'Authorized'  #set results to be authorized words
+                    myColor = (0,255,0)      #set color of boxes to green
+                
+                # for unauthorized QR codes
                 else:
-                    myOutput = 'Un-Authorized'
-                    myColor = (0,0,255)
+                    myOutput = 'Un-Authorized'  #set the results to be unauthorized
+                    myColor = (0,0,255)         #set the color to red
                     
                 #get the polygon points from the decoder
                 pts = np.array([barcode.polygon], np.int32)
                 pts = pts.reshape((-1,1,2))
                 #draw polygon around qr code
                 cv2.polylines(qrimage, [pts], True, myColor, 5)
-                pts2 = barcode.rect
-                new_image = cv2.putText(qrimage, myOutput, (pts2[0], pts2[1]), cv2.FONT_HERSHEY_COMPLEX, 2.5, myColor, 2)
+                pts2 = barcode.rect  #draw a rectangle on the QR code
+                new_image = cv2.putText(qrimage, myOutput, (pts2[0], pts2[1]), cv2.FONT_HERSHEY_COMPLEX, 2.5, myColor, 2) #Put text on top of the QR code 
 
+                # convert the image to be able to display it as an html image
                 _, frame_buff = cv2.imencode('.jpg', new_image)
                 im_bytes = frame_buff.tobytes()
                 frame_b64 = base64.b64encode(im_bytes)
@@ -161,6 +167,8 @@ def scan(request):
                 
                 return render(request, 'scan.html', {"result": myOutput, "img": new_img, "color":color})
 
+
+# For real time scanning
 @gzip.gzip_page                  
 def stream(request):
     try:
